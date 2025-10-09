@@ -9,8 +9,19 @@ typedef struct no{
 	struct no *direita;
 } No;
 
+preOrdem(No *raiz){
+	if(raiz==NULL){
+		return;
+	}
+	
+	printf("%d",raiz->noValor);
+	preOrdem(raiz->esquerda);
+	preOrdem(raiz->direita);
+}
+
 main(){
 	int condicao=1;
+	No *raiz=NULL;
 	
 	do{
 		printf("Inicio do programa\n");
@@ -35,8 +46,12 @@ main(){
 				break;
 			case 2:
 				break;
+			
 			case 3:
-				break;
+				printf("Iniciando a exibição em modo Pre-Ordem!");
+				preOrdem(raiz);
+			break;
+			
 			case 4:
 				break;
 			case 5:
