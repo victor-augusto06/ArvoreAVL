@@ -9,17 +9,34 @@ typedef struct no{
 	struct no *direita;
 } No;
 
-preOrdem(No *raiz){
+void preOrdem(No *raiz){
 	if(raiz==NULL){
 		return;
 	}
-	
-	printf("%d",raiz->noValor);
+	printf("%d |",raiz->noValor);
 	preOrdem(raiz->esquerda);
 	preOrdem(raiz->direita);
 }
 
-main(){
+void posOrdem(No *raiz){
+	if(raiz==NULL){
+		return;
+	}
+	posOrdem(raiz->esquerda);
+	posOrdem(raiz->direita);
+	printf("%d |",raiz->noValor);
+}
+
+void simetrico(No *raiz){
+	if(raiz==NULL){
+		return;
+	}
+	simetrico(raiz->esquerda);
+	printf("%d |",raiz->noValor);
+	simetrico(raiz->direita);	
+}
+
+int main(){
 	int condicao=1;
 	No *raiz=NULL;
 	
@@ -48,14 +65,20 @@ main(){
 				break;
 			
 			case 3:
-				printf("Iniciando a exibição em modo Pre-Ordem!");
+				printf("Iniciando a exibição em modo Pre-Ordem!\n");
 				preOrdem(raiz);
 			break;
 			
 			case 4:
-				break;
+				printf("Iniciando a exibição em modo Pos-Ordem!\n");
+				posOrdem(raiz);	
+			break;
+			
 			case 5:
-				break;
+				printf("Iniciando a exibição em modo Simetrico!\n");
+				simetrico(raiz);		
+			break;
+			
 			case 6:
 				break;
 			case 7:
