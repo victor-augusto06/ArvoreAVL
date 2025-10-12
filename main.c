@@ -7,6 +7,32 @@ typedef struct no{
 	struct no *esquerda;
 	struct no *direita;
 } No;
+int altura(No* no);
+int maior(int a, int b);
+No* rotacao_direita(No* no);
+No* rotacao_esquerda(No* no);
+No* encontrar_menor_No(No* no);
+No* inserir(No* no_atual, int valor);
+No* excluir(No* no_atual, int valor);
+No* busca_no(No* no, int valor);
+No* cria_novo_no(int valor);
+void preOrdem(No *raiz);
+void posOrdem(No *raiz);
+void simetrico(No *raiz);
+
+int altura(No* no){
+	if(no==NULL)
+		return 0;
+	else
+		return no->altura;
+}
+
+int maior(int a, int b){
+	if(a>b)
+		return a;
+	else
+		return b;
+}
 
 void preOrdem(No *raiz){
 	if(raiz==NULL){
@@ -67,20 +93,6 @@ No* rotacao_esquerda(No* no) {
 	return filho_direita;
 }
 
-int altura(No* no){
-	if(no==NULL)
-		return 0;
-	else
-		return no->altura;
-}
-
-int maior(int a, int b){
-	if(a>b)
-		return a;
-	else
-		return b;
-}
-
 No* inserir(No* no_atual, int valor){
 	int fator_balanceamento=0;
 
@@ -128,6 +140,67 @@ No* busca_no(No* no, int valor){
 		return busca_no(no->direita,valor);
 }
 
+No* encontrar_menor_No(No* no) {
+    while (no && no->esquerda != NULL) {
+        no = no->esquerda;
+    }
+    return no;
+}
+
+No* excluir(No* no_atual, int valor){
+	int fator_balanceamento=0;
+
+	if(no_atual==NULL){
+		return NULL;
+	}
+
+	if(no_atual->noValor>valor){
+		no_atual->esquerda = excluir(no_atual->esquerda,valor);
+	}
+	else if(no_atual->noValor<valor){
+		no_atual->direita = excluir(no_atual->direita,valor);
+	}else{
+		if(no_atual->direita!=NULL && no_atual->esquerda!=NULL){
+			No* temp = encontrar_menor_No(no_atual->direita);
+			no_atual->noValor = temp->noValor;
+			no_atual->direita = excluir(no_atual->direita, temp->noValor);
+
+		}else if(no_atual->direita!=NULL){
+			No* temp = no_atual->direita;
+			free(no_atual);
+			return temp;
+
+		}else if(no_atual->esquerda!=NULL){
+			No* temp = no_atual->esquerda;
+			free(no_atual);
+			return temp;
+
+		}else{
+			free(no_atual);
+			return NULL;
+		}
+	}
+	no_atual->altura= 1 + maior(altura(no_atual->esquerda),altura(no_atual->direita));
+	fator_balanceamento=altura(no_atual->esquerda) - altura(no_atual->direita);
+	if(fator_balanceamento>1){
+		if(altura(no_atual->esquerda->esquerda)-altura(no_atual->esquerda->direita)>=0){
+			return rotacao_direita(no_atual);
+		}else{
+			no_atual->esquerda = rotacao_esquerda(no_atual->esquerda);
+			return rotacao_direita(no_atual);
+		}
+	}else if(fator_balanceamento<-1){
+		if(altura(no_atual->direita->esquerda)-altura(no_atual->direita->direita)<=0){
+			return rotacao_esquerda(no_atual);
+		}else{
+			no_atual->direita = rotacao_direita(no_atual->direita);
+			return rotacao_esquerda(no_atual);
+		}
+	}
+
+	return no_atual;
+}
+
 int main(){
 	int condicao=1;
 	No *raiz=NULL;
@@ -162,7 +235,11 @@ int main(){
 			}
 
 			case 2:{
-				
+				int valor_excluir;
+				printf("Digite o valor que deseja excluir: ");
+				scanf("%d", &valor_excluir);
+				raiz = excluir(raiz, valor_excluir);
+				printf("Operacao de exclusao para o valor %d finalizada.\n\n", valor_excluir);
 				break;
 			}
 			
@@ -185,7 +262,8 @@ int main(){
 			}			
 			
 			case 6:{
-				break;
+				
+			break;
 			}
 				
 			case 7:{
@@ -203,10 +281,21 @@ int main(){
 			}
 			
 			case 8:{
+				int valorAntigo, valorNovo;
+				printf("Qual no você deseja alterar na arvore?");
+				scanf("%d",&valorAntigo);
+				if(busca_no(raiz, valorAntigo)==NULL){
+					printf("Valor a ser editado não foi encontrado");
+				}else{
+					printf("Qual o novo valor?");
+					scanf("%d",&valorNovo);
+					raiz = excluir(raiz, valorAntigo);
+					raiz = inserir(raiz, valorNovo);
+					printf("Operação concluída!");
+				}
 				break;
 			}
 		}
 		
 	}while(condicao!=0);
-
 }
