@@ -1,15 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
 typedef struct no{
 	int noValor;
 	int altura;
 	struct no *esquerda;
 	struct no *direita;
 } No;
-
-
 
 void preOrdem(No *raiz){
 	if(raiz==NULL){
@@ -48,7 +45,45 @@ No* cria_novo_no(int valor){
 	return novo;
 }
 
+No* rotacao_direita(No* no) {
+	No* filho_esquerda = no->esquerda;
+	No* subArvore_direita = filho_esquerda->direita;
+
+	no->esquerda = subArvore_direita;
+	filho_esquerda->direita = no;
+	no->altura=1 + maior(altura(no->esquerda),altura(no->direita));
+	filho_esquerda->altura = 1 + maior(altura(filho_esquerda->esquerda),altura(filho_esquerda->direita));
+	return filho_esquerda;
+}
+
+No* rotacao_esquerda(No* no) {
+	No* filho_direita = no->direita;
+	No* subArvore_esquerda = filho_direita->esquerda;
+
+	no->direita = subArvore_esquerda;
+	filho_direita->esquerda = no;
+	no->altura=1 + maior(altura(no->esquerda),altura(no->direita));
+	filho_direita->altura = 1 + maior(altura(filho_direita->esquerda),altura(filho_direita->direita));
+	return filho_direita;
+}
+
+int altura(No* no){
+	if(no==NULL)
+		return 0;
+	else
+		return no->altura;
+}
+
+int maior(int a, int b){
+	if(a>b)
+		return a;
+	else
+		return b;
+}
+
 No* inserir(No* no_atual, int valor){
+	int fator_balanceamento=0;
+
 	if(no_atual==NULL){
 		return cria_novo_no(valor);
 	}
@@ -60,7 +95,37 @@ No* inserir(No* no_atual, int valor){
 			no_atual->direita=inserir(no_atual->direita, valor);
 		}
 	}
+	no_atual->altura= 1 + maior(altura(no_atual->esquerda),altura(no_atual->direita));
+	fator_balanceamento=altura(no_atual->esquerda) - altura(no_atual->direita);
+	if(fator_balanceamento>1){
+		if(no_atual->esquerda->noValor>valor){
+			return rotacao_direita(no_atual);
+		}else{
+			no_atual->esquerda = rotacao_esquerda(no_atual->esquerda);
+			return rotacao_direita(no_atual);
+		}
+	}else if(fator_balanceamento<-1){
+		if(no_atual->direita->noValor<valor){
+			return rotacao_esquerda(no_atual);
+		}else{
+			no_atual->direita = rotacao_direita(no_atual->direita);
+			return rotacao_esquerda(no_atual);
+		}
+	}
 	return no_atual;
+}
+
+No* busca_no(No* no, int valor){
+	if(no==NULL){
+		return NULL;
+	}
+
+	if(no->noValor==valor)
+		return no;
+	else if(no->noValor>valor)
+		return busca_no(no->esquerda, valor);
+	else 
+		return busca_no(no->direita,valor);
 }
 
 int main(){
@@ -124,6 +189,16 @@ int main(){
 			}
 				
 			case 7:{
+				int valorBusca;
+				printf("Qual no você deseja procurar na arvore?");
+				scanf("%d",&valorBusca);
+				No* no_encontrado = busca_no(raiz, valorBusca);
+
+				if(no_encontrado == NULL)
+					printf("Nao foi possivel encontrar o no %d\n", valorBusca);
+				else
+					printf("Valor %d encontrado na arvore! Altura do no: %d\n\n", no_encontrado->noValor, no_encontrado->altura);
+				
 				break;
 			}
 			
