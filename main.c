@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#define COUNT 10
 
 typedef struct no{
 	int noValor;
@@ -7,6 +8,7 @@ typedef struct no{
 	struct no *esquerda;
 	struct no *direita;
 } No;
+
 int altura(No* no);
 int maior(int a, int b);
 No* rotacao_direita(No* no);
@@ -59,6 +61,25 @@ void simetrico(No *raiz){
 	simetrico(raiz->esquerda);
 	printf("%d |",raiz->noValor);
 	simetrico(raiz->direita);	
+}
+
+void exibir_arvore_2d(No* raiz, int espaco){
+	int i=COUNT;
+
+	if(raiz==NULL){
+		return;
+	}
+
+	espaco += COUNT;
+
+	exibir_arvore_2d(raiz->direita, espaco);
+	printf("\n");
+	for(i; i<espaco; i++){
+		printf(" ");
+	}
+
+	printf("%d\n",raiz->noValor);
+	exibir_arvore_2d(raiz->esquerda, espaco);
 }
 
 No* cria_novo_no(int valor){
@@ -262,8 +283,9 @@ int main(){
 			}			
 			
 			case 6:{
-				
-			break;
+				printf("Iniciando a exibicao em modo Grafo\n");
+				exibir_arvore_2d(raiz, 0);
+				break;
 			}
 				
 			case 7:{
@@ -276,7 +298,7 @@ int main(){
 					printf("Nao foi possivel encontrar o no %d\n", valorBusca);
 				else
 					printf("Valor %d encontrado na arvore! Altura do no: %d\n\n", no_encontrado->noValor, no_encontrado->altura);
-				
+
 				break;
 			}
 			
